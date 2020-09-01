@@ -57,7 +57,18 @@ class CI360Viewer {
 
         this.movementStart = event.pageX;
         this.isClicked = true;
-        this.container.style.cursor = 'grabbing';
+
+        let trigger = null;
+
+        if (this.trigger) {
+            trigger = this.container.closest(this.trigger);
+        }
+
+        if (trigger) {
+            trigger.style.cursor = 'grabbing';
+        } else {
+            this.container.style.cursor = 'grabbing';
+        }
     }
 
     mouseup() {
@@ -65,7 +76,18 @@ class CI360Viewer {
 
         this.movementStart = 0;
         this.isClicked = false;
-        this.container.style.cursor = 'grab';
+
+        let trigger = null;
+
+        if (this.trigger) {
+            trigger = this.container.closest(this.trigger);
+        }
+
+        if (trigger) {
+            trigger.style.cursor = 'grab';
+        } else {
+            this.container.style.cursor = 'grab';
+        }
 
         if (this.bottomCircle) {
             this.show360ViewCircleIcon();
@@ -310,8 +332,19 @@ class CI360Viewer {
 
     onAllImagesLoaded() {
         this.imagesLoaded = true;
-        this.container.style.cursor = 'grab';
         this.removeLoader();
+
+        let trigger = null;
+
+        if (this.trigger) {
+            trigger = this.container.closest(this.trigger);
+        }
+
+        if (trigger) {
+            trigger.style.cursor = 'grab';
+        } else {
+            this.container.style.cursor = 'grab';
+        }
 
         if (!this.fullScreenView) {
             this.speedFactor = Math.floor(this.dragSpeed / 150 * 36 / this.amount * 25 * this.container.offsetWidth / 1500) || 1;
@@ -741,16 +774,34 @@ class CI360Viewer {
     }
 
     attachEvents(draggable, swipeable, keys) {
+        let trigger = null;
+
+        if (this.trigger) {
+            trigger = this.container.closest(this.trigger);
+        }
+
         if (draggable) {
-            this.container.addEventListener('mousedown', this.mousedown.bind(this));
-            this.container.addEventListener('mouseup', this.mouseup.bind(this));
-            this.container.addEventListener('mousemove', this.mousemove.bind(this));
+            if (trigger) {
+                trigger.addEventListener('mousedown', this.mousedown.bind(this));
+                trigger.addEventListener('mouseup', this.mouseup.bind(this));
+                trigger.addEventListener('mousemove', this.mousemove.bind(this));
+            } else {
+                this.container.addEventListener('mousedown', this.mousedown.bind(this));
+                this.container.addEventListener('mouseup', this.mouseup.bind(this));
+                this.container.addEventListener('mousemove', this.mousemove.bind(this));
+            }
         }
 
         if (swipeable) {
-            this.container.addEventListener('touchstart', this.touchstart.bind(this), { passive: true });
-            this.container.addEventListener('touchend', this.touchend.bind(this), { passive: true });
-            this.container.addEventListener('touchmove', this.touchmove.bind(this));
+            if (trigger) {
+                trigger.addEventListener('touchstart', this.touchstart.bind(this), { passive: true });
+                trigger.addEventListener('touchend', this.touchend.bind(this), { passive: true });
+                trigger.addEventListener('touchmove', this.touchmove.bind(this));
+            } else {
+                this.container.addEventListener('touchstart', this.touchstart.bind(this), { passive: true });
+                this.container.addEventListener('touchend', this.touchend.bind(this), { passive: true });
+                this.container.addEventListener('touchmove', this.touchmove.bind(this));
+            }
         }
 
         if (keys) {
@@ -764,16 +815,27 @@ class CI360Viewer {
     applyStylesToContainer() {
         this.container.style.position = 'relative';
         this.container.style.width = '100%';
-        this.container.style.cursor = 'wait';
         this.container.setAttribute('draggable', 'false');
         this.container.className = `${this.container.className} initialized`;
+
+        let trigger = null;
+
+        if (this.trigger) {
+            trigger = this.container.closest(this.trigger);
+        }
+
+        if (trigger) {
+            trigger.style.cursor = 'wait';
+        } else {
+            this.container.style.cursor = 'wait';
+        }
     }
 
     init(container) {
         let {
             folder, filename, imageList, indexZeroBase, amount, draggable = true, swipeable = true, keys, bottomCircle, bottomCircleOffset, boxShadow,
             autoplay, speed, autoplayReverse, fullScreen, magnifier, ratio, responsive, ciToken, ciSize, ciOperation,
-            ciFilters, lazyload, lazySelector, spinReverse, dragSpeed, stopAtEdges, controlReverse
+            ciFilters, lazyload, lazySelector, spinReverse, dragSpeed, stopAtEdges, controlReverse, trigger
         } = get360ViewProps(container);
         const ciParams = { ciSize, ciToken, ciOperation, ciFilters };
 
@@ -800,6 +862,7 @@ class CI360Viewer {
         this.dragSpeed = dragSpeed;
         this.autoplaySpeed = this.speed * 36 / this.amount;
         this.stopAtEdges = stopAtEdges;
+        this.trigger = trigger;
 
         this.applyStylesToContainer();
 
