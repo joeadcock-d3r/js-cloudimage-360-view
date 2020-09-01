@@ -273,9 +273,6 @@ class CI360Viewer {
 
     update() {
         const image = this.images[this.activeImage - 1];
-        const ctx = this.canvas.getContext("2d");
-
-        ctx.scale(this.devicePixelRatio, this.devicePixelRatio);
 
         if (this.fullScreenView) {
             this.canvas.width = window.innerWidth * this.devicePixelRatio;
@@ -288,12 +285,16 @@ class CI360Viewer {
 
             ctx.drawImage(image, offsetX, offsetY, width, height);
         } else {
-            this.canvas.width = this.container.offsetWidth * this.devicePixelRatio;
-            this.canvas.style.width = this.container.offsetWidth + 'px';
-            this.canvas.height = this.container.offsetWidth * this.devicePixelRatio / image.width * image.height;
-            this.canvas.style.height = this.container.offsetWidth / image.width * image.height + 'px';
+            this.svg.width = this.container.offsetWidth * this.devicePixelRatio;
+            this.svg.style.width = this.container.offsetWidth + 'px';
+            this.svg.height = this.container.offsetWidth * this.devicePixelRatio / image.width * image.height;
+            this.svg.style.height = this.container.offsetWidth / image.width * image.height + 'px';
 
-            ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
+            this.svg.querySelector('image').setAttribute('xlink:href', image.src);
+
+            const filter = this.svg.querySelector('#hue-rotate');
+
+            filter.querySelector('feColorMatrix').setAttribute('values', window.hueRotate);
         }
     }
 
@@ -353,14 +354,9 @@ class CI360Viewer {
 
             ctx.drawImage(event.target, offsetX, offsetY, width, height);
         } else {
-            this.canvas.width = this.container.offsetWidth * this.devicePixelRatio;
-            this.canvas.style.width = this.container.offsetWidth + 'px';
-            this.canvas.height = this.container.offsetWidth * this.devicePixelRatio / event.target.width * event.target.height;
-            this.canvas.style.height = this.container.offsetWidth / event.target.width * event.target.height + 'px';
-
-            const ctx = this.canvas.getContext("2d");
-
-            ctx.drawImage(event.target, 0, 0, this.canvas.width, this.canvas.height);
+            this.svg.width = this.container.offsetWidth * 1;
+            this.svg.height = this.container.offsetWidth * 1 / event.target.width * event.target.height;
+            this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><filter id="hue-rotate"><feColorMatrix id="hue-rotate2" type="hueRotate" values="80"/></filter><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" filter="url(#hue-rotate)" /></svg>';
         }
 
         if (this.lazyload && !this.fullScreenView) {
@@ -731,16 +727,17 @@ class CI360Viewer {
     }
 
     addCanvas() {
-        this.canvas = document.createElement('canvas');
-        this.canvas.style.width = '100%';
-        this.canvas.style.fontSize = '0';
+        this.svg = document.createElement('span');
+        this.svg.classList.add('svg');
+        this.svg.style.width = '100%';
+        this.svg.style.fontSize = '0';
 
         if (this.ratio) {
             this.container.style.minHeight = this.container.offsetWidth * this.ratio + 'px';
-            this.canvas.height = parseInt(this.container.style.minHeight);
+            this.svg.height = parseInt(this.container.style.minHeight);
         }
 
-        this.innerBox.appendChild(this.canvas);
+        this.innerBox.appendChild(this.svg);
     }
 
     attachEvents(draggable, swipeable, keys) {
