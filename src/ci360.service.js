@@ -314,9 +314,11 @@ class CI360Viewer {
 
             this.svg.querySelector('image').setAttribute('xlink:href', image.src);
 
-            const filter = this.svg.querySelector('#hue-rotate');
+            if (this.hue) {
+                const filter = this.svg.querySelector('#hue-rotate');
 
-            filter.querySelector('feColorMatrix').setAttribute('values', window.hueRotate);
+                filter.querySelector('feColorMatrix').setAttribute('values', window.hueRotate);
+            }
         }
     }
 
@@ -389,7 +391,12 @@ class CI360Viewer {
         } else {
             this.svg.width = this.container.offsetWidth * 1;
             this.svg.height = this.container.offsetWidth * 1 / event.target.width * event.target.height;
-            this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><filter id="hue-rotate"><feColorMatrix id="hue-rotate2" type="hueRotate" values="80"/></filter><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" filter="url(#hue-rotate)" /></svg>';
+
+            if (this.hue) {
+                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><filter id="hue-rotate"><feColorMatrix id="hue-rotate2" type="hueRotate" values="80"/></filter><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" filter="url(#hue-rotate)" /></svg>';
+            } else {
+                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" /></svg>';
+            }
         }
 
         if (this.lazyload && !this.fullScreenView) {
@@ -835,7 +842,7 @@ class CI360Viewer {
         let {
             folder, filename, imageList, indexZeroBase, amount, draggable = true, swipeable = true, keys, bottomCircle, bottomCircleOffset, boxShadow,
             autoplay, speed, autoplayReverse, fullScreen, magnifier, ratio, responsive, ciToken, ciSize, ciOperation,
-            ciFilters, lazyload, lazySelector, spinReverse, dragSpeed, stopAtEdges, controlReverse, trigger
+            ciFilters, lazyload, lazySelector, spinReverse, dragSpeed, stopAtEdges, controlReverse, trigger, hue
         } = get360ViewProps(container);
         const ciParams = { ciSize, ciToken, ciOperation, ciFilters };
 
@@ -863,6 +870,7 @@ class CI360Viewer {
         this.autoplaySpeed = this.speed * 36 / this.amount;
         this.stopAtEdges = stopAtEdges;
         this.trigger = trigger;
+        this.hue = hue;
 
         this.applyStylesToContainer();
 

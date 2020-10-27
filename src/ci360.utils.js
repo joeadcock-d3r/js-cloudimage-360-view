@@ -27,6 +27,7 @@ const get360ViewProps = (image) => ({
     controlReverse: isTrue(image, 'control-reverse'),
     stopAtEdges: isTrue(image, 'stop-at-edges'),
     trigger: attr(image, 'trigger') || attr(image, 'data-trigger') || null,
+    hue: attr(image, 'hue') || attr(image, 'data-hue') || null,
 });
 
 const isTrue = (image, type) => {
