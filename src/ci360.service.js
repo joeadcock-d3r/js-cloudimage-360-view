@@ -393,9 +393,9 @@ class CI360Viewer {
             this.svg.height = this.container.offsetWidth * 1 / event.target.width * event.target.height;
 
             if (this.hue) {
-                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><filter id="hue-rotate"><feColorMatrix id="hue-rotate2" type="hueRotate" values="80"/></filter><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" filter="url(#hue-rotate)" /></svg>';
+                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><filter id="hue-rotate"><feColorMatrix id="hue-rotate2" type="hueRotate" values="80"/></filter><image width="100%" height="100%" xlink:href="' + event.target.src + '" filter="url(#hue-rotate)" /></svg>';
             } else {
-                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><image width="' + this.svg.width + '" height="' + this.svg.height + '" xlink:href="' + event.target.src + '" /></svg>';
+                this.svg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + this.svg.width + '" height="' + this.svg.height + '"><image width="100%" height="100%" xlink:href="' + event.target.src + '" /></svg>';
             }
         }
 
